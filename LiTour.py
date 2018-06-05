@@ -32,13 +32,13 @@ def utils(args):
     json_data = response.json()
 
     if args["--new"]:
-        table_data = [["S.NO", "Title", "Tournament id", "variant", "StartsAt", "Duration"]]
+        table_data = [["S.NO", "Title", "variant", "StartsAt", "finishesAt", "Duration"]]
         table = created(json_data, table_data)
         print_table(table)
         ans = input("Do you want to add any tournament to your calendar ? y/n ")
 
         if ans.lower() == "y":
-            handle_event(json_data)
+            handle_event(table[1:])
         else:
             sys.exit()
 
@@ -86,9 +86,9 @@ def created(json_data, table_data):
         starting_time = epoch_time(tournament['startsAt'])
         Duration = tournament['minutes']
         variant = tournament['variant']['name']
-        ids = tournament['id']
+        finishesAt = epoch_time(tournament['finishesAt'])
         count += 1
-        table_data.append([count, name, ids, variant, starting_time, Duration])
+        table_data.append([count, name, variant, starting_time, finishesAt, Duration])
 
     return table_data
 
@@ -125,17 +125,17 @@ def get_credentials():
     return creds
 
 
-def handle_event(json_data):
+def handle_event(table):
     """ Gets the credential and then authorize them
     """
     credential = get_credentials()
-    event = make_events(json_data)
+    event = make_events(table)
     service = build('calendar', 'v3', http=credential.authorize(Http()))
     event = service.events().insert(calendarId='primary', body=event).execute()
     print(colors(('Event created: %s' % (event.get('htmlLink'))), 32))
 
 
-def make_events(json_data):
+def make_events(table):
     """Makes a dictionary that have
         summary     Name of the tournament
         start       Starting time of the tournament
@@ -143,17 +143,16 @@ def make_events(json_data):
 
         This dictionary is send to google calendar for adding an event.
     """
-    tour_id = input("Enter the id of the tournament you want to add: ")
+    row_num = input("Enter the row number for the tournament you want to add: ")
     event = {}
-    for tournament in json_data['created']:
-        if tournament['id'] == tour_id:
-            event['summary'] = tournament['fullName']
-            event['start'] = {'dateTime': RFC_time(tournament['startsAt'])}
-            event['end'] = {'dateTime': RFC_time(tournament['finishesAt'])}
+    for tournament in table:
+        if int(row_num) == tournament[0]:
+            event['summary'] = tournament[1]
+            event['start'] = {'dateTime': RFC_time(tournament[3])}
+            event['end'] = {'dateTime': RFC_time(tournament[4])}
             return event
-            break
     else:
-        print(colors(("No tournament exists with id %s" % tour_id), 31))
+        print(colors(("No tournament exists with id %s" % row_num), 31))
 
 
 def print_table(table_data):
@@ -171,13 +170,14 @@ def colors(string, color):
 
 def epoch_time(time):
     """Takes milliseconds and then change it to epoch time"""
-    date_time = datetime.datetime.fromtimestamp(time / 1000).strftime('%a, %d %b %Y %H:%M:%S %Z')
+    date_time = datetime.datetime.fromtimestamp(time / 1000).strftime('%a, %d %b %Y %H:%M:%S')
     return date_time
 
 
-def RFC_time(time):
+def RFC_time(epoch_time):
     """Takes time in form of UTC and then change it into rfc 3339 time"""
-    rfc_time = datetime.datetime.fromtimestamp(time / 1000).isoformat("T") + "Z"
+    millisec = datetime.datetime.strptime(epoch_time, '%a, %d %b %Y %H:%M:%S').strftime("%s.%f")
+    rfc_time = datetime.datetime.fromtimestamp(float(millisec) / 1000).isoformat("T") + "Z"
     return rfc_time
 
 
