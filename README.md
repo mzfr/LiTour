@@ -1,10 +1,52 @@
 # LiTour
 
-LiTour is a simple python script that gets you information about the tournaments on lichess.org You can also add any upcoming tournament in google calendar all this without leaving your beloved terminal.
+LiTour is a simple python script that gets you information about the tournaments on lichess.org. You can also add any upcoming tournament in google calendar all this without leaving your beloved terminal.
 
-### Requirement
+## Usage
 
-* python 3
+Run `Litour.py ` with the follwoing options:
+
+
+    Usage:
+        litour.py [-f | -s | -n ]
+
+    Options:
+        -h, --help              Show help screen.
+        -f, --finished          Show finished tournaments
+        -s, --started           Show started tournaments
+        -n, --new               Show new/created tournaments
+
+
+For adding the tournament to your Google calendar all you have to do is provide the id of the tournament.
+Id of the tournament can be obtained from the list of new tournaments.
+
+## Example
+
+*  Finished tournament
+![alt text](https://github.com/mzfr/LiTour/blob/master/images/finished_tournament.png)
+
+-------------------------------------------------------------------------------
+
+* Started tournaments
+![alt text](https://github.com/mzfr/LiTour/blob/master/images/started_tournament.png)
+
+-------------------------------------------------------------------------------
+
+* Created tournaments
+![alt text](https://github.com/mzfr/LiTour/blob/master/images/new_tournament.png)
+
+- If you choose new tournaments then you'll have another option of adding a tournament as an event.
+
+ ![alt text](https://github.com/mzfr/LiTour/blob/master/images/new.png)
+
+- If you choose to add an event to your calendar, it will look like:
+
+ ![alt text](https://github.com/mzfr/LiTour/blob/master/images/calendar.png)
+
+
+## Installation
+
+* You will need python 3
 * Run `pip install -r requirements.txt`
 * Now you need access to google api. For that follow the steps:
     1) Visit Google's [Python Quickstart](https://developers.google.com/calendar/quickstart/python) page and follow the steps.
@@ -21,55 +63,3 @@ LiTour is a simple python script that gets you information about the tournaments
 
     By now you should have a client_secret.json and a credentials.json file.
     If you have them then you are good to go.
-
-### Usage
-
-Run `Litour.py ` with the follwoing options:
-
-    ```
-    Usage:
-        litour.py [-f | -s | -n ]
-
-    Options:
-        -h, --help              Show help screen.
-        -f, --finished          Show finished tournaments
-        -s, --started           Show started tournaments
-        -n, --new               Show new/created tournaments
-    ```
-
-For adding the tournament to your Google calendar all you have to do is provide the id of the tournament.
-Id of the tournament can be obtained from the list of new tournaments.
-
-### Example
-
-* Run `Litour.py -f`
-
-```
-| S.NO | Title                           | variant    | Number-of-players | Winner               |
-|------|---------------------------------|------------|-------------------|----------------------|
-| 1    | U1700 Bullet Arena              | Standard   | 100               | <winner name>        |
-| 2    | Werle Arena                     | Standard   | 30                | <winner name>        |
-```
-
-
-* Run `Litour.py -s`
-
-```
-| S.NO | Title                        | variant          | FinishesAt                 | Duration |
-|------|------------------------------|------------------|----------------------------|----------|
-| 1    | Italian Game Arena           | Standard         | Sat, 02 Jun 2018 23:53:40  | 45       |
-| 2    | Blow up Arena                | Atomic           | Sat, 02 Jun 2018 23:56:12  | 40       |
-```
-
-* Run `Litour.py -n`
-
-```
-| S.NO | Title                           | Tournament id | variant          | StartsAt                   | Duration |
-|------|---------------------------------|---------------|------------------|----------------------------|----------|
-| 1    | Levitsky Arena                  | j3dvIkgm      | Standard         | Sat, 02 Jun 2018 23:18:59  | 45       |
-| 2    | Nurlan Arena                    | x5Qb7tu7      | Standard         | Sat, 02 Jun 2018 23:19:13  | 30       |
-
-Do you want to add any tournament to your calendar ? y/n: y
-Enter the id of the tournament you want to add: j3dvIkgm
-Event created: <Link to your google calendar event>
-```
