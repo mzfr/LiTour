@@ -148,6 +148,7 @@ def make_events(table):
     for tournament in table:
         if int(row_num) == tournament[0]:
             event['summary'] = tournament[1]
+            print(tournament[3])
             event['start'] = {'dateTime': RFC_time(tournament[3])}
             event['end'] = {'dateTime': RFC_time(tournament[4])}
             return event
@@ -176,8 +177,7 @@ def epoch_time(time):
 
 def RFC_time(epoch_time):
     """Takes time in form of UTC and then change it into rfc 3339 time"""
-    millisec = datetime.datetime.strptime(epoch_time, '%a, %d %b %Y %H:%M:%S').strftime("%s.%f")
-    rfc_time = datetime.datetime.fromtimestamp(float(millisec) / 1000).isoformat("T") + "Z"
+    rfc_time = datetime.datetime.strptime(epoch_time, '%a, %d %b %Y %H:%M:%S').isoformat("T") + "Z"
     return rfc_time
 
 
