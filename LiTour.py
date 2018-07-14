@@ -17,7 +17,7 @@ from oauth2client import file, client, tools
 import requests
 import datetime
 import sys
-from terminaltables import AsciiTable
+from tabulate import tabulate
 from docopt import docopt
 
 
@@ -30,11 +30,12 @@ def utils(args):
     url = "https://lichess.org/api/tournament"
     response = requests.get(url)
     json_data = response.json()
+    table = []
 
     if args["--new"]:
-        table_data = [["S.NO", "Title", "variant", "StartsAt", "finishesAt", "Duration"]]
-        table = created(json_data, table_data)
-        print_table(table)
+        header = ["S.NO", "Title", "variant", "StartsAt", "finishesAt", "Duration"]
+        table_view = created(json_data, table)
+        print_table(table_view, header)
         ans = input("Do you want to add any tournament to your calendar ? y/n ")
 
         if ans.lower() == "y":
@@ -43,16 +44,16 @@ def utils(args):
             sys.exit()
 
     elif args["--finished"]:
-        table_data = [["S.NO", "Title", "variant", "Number-of-players", "Winner"]]
-        table = finished(json_data, table_data)
-        print_table(table)
+        header = ["S.NO", "Title", "variant", "Number-of-players", "Winner"]
+        table_view = finished(json_data, table)
+        print_table(table_view, header)
     elif args["--started"]:
-        table_data = [["S.NO", "Title", "variant", "FinishesAt", "Duration"]]
-        table = started(json_data, table_data)
-        print_table(table)
+        header = ["S.NO", "Title", "variant", "FinishesAt", "Duration"]
+        table_view = started(json_data, table)
+        print_table(table_view, header)
 
 
-def finished(json_data, table_data):
+def finished(json_data, table):
     """Gets all the finished tournaments from the JSON data and shows the following:
         - name of the the tournament
         - variant of the tournament
@@ -67,12 +68,12 @@ def finished(json_data, table_data):
         winner = tournament['winner']['name']
         players = tournament['nbPlayers']
         count += 1
-        table_data.append([count, name, variant, players, winner])
+        table.append([count, name, variant, players, winner])
 
-    return table_data
+    return table
 
 
-def created(json_data, table_data):
+def created(json_data, table):
     """Gets all the newly created tournaments from JSON data and shows the following:
         - Name of the tournament
         - Time at which the tournament starts
@@ -88,12 +89,12 @@ def created(json_data, table_data):
         variant = tournament['variant']['name']
         finishesAt = epoch_time(tournament['finishesAt'])
         count += 1
-        table_data.append([count, name, variant, starting_time, finishesAt, Duration])
+        table.append([count, name, variant, starting_time, finishesAt, Duration])
 
-    return table_data
+    return table
 
 
-def started(json_data, table_data):
+def started(json_data, table):
     """Gets all the started tournaments from lichess.org and shows the following:
         - Name of the tournament
         - Variant of the tournament
@@ -108,9 +109,9 @@ def started(json_data, table_data):
         Duration = tournament['minutes']
         variant = tournament['variant']['name']
         count += 1
-        table_data.append([count, name, variant, finish_time, Duration])
+        table.append([count, name, variant, finish_time, Duration])
 
-    return table_data
+    return table
 
 
 def get_credentials():
@@ -156,12 +157,11 @@ def make_events(table):
         print(colors(("No tournament exists with id %s" % row_num), 31))
 
 
-def print_table(table_data):
+def print_table(table_view, header):
     """Generate a beautiful ascii table"""
-    table = AsciiTable(table_data)
-    table.inner_row_border = True
+    table = tabulate(table_view, headers=header, tablefmt="fancy_grid")
     print("\n")
-    print(colors(table.table, 32))
+    print(colors(table, 32))
 
 
 def colors(string, color):
