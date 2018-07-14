@@ -170,13 +170,20 @@ def colors(string, color):
 
 
 def epoch_time(time):
-    """Takes milliseconds and then change it to epoch time"""
+    """Takes milliseconds and then change it to epoch time
+        :time: float value of time in milliseconds
+        :return: epoch time format
+    """
     date_time = datetime.datetime.fromtimestamp(time / 1000).strftime('%a, %d %b %Y %H:%M:%S')
     return date_time
 
 
-def RFC_time(epoch_time):
-    """Takes time in form of UTC and then change it into rfc 3339 time"""
+def RFC_time(epoch_time: str):
+    """Takes time in form of UTC and then change it into rfc 3339 time
+
+        :epoch_time: string of epoch format i.e Thu, 26 Jul 2018 19:30:00
+        :return: string of rfc 3339 format i.e 2018-07-26T19:30:00Z
+    """
     rfc_time = datetime.datetime.strptime(epoch_time, '%a, %d %b %Y %H:%M:%S').isoformat("T") + "Z"
     return rfc_time
 
