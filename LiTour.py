@@ -27,6 +27,9 @@ def main():
 
 
 def utils(args):
+    """A simple utils function to handle everythinng
+        :args: args passed by docopt
+    """
     url = "https://lichess.org/api/tournament"
     response = requests.get(url)
     json_data = response.json()
@@ -174,7 +177,7 @@ def epoch_time(time):
         :time: float value of time in milliseconds
         :return: epoch time format
     """
-    date_time = datetime.datetime.fromtimestamp(time / 1000).strftime('%a, %d %b %Y %H:%M:%S')
+    date_time = datetime.datetime.fromtimestamp(time).strftime('%a, %d %b %Y %H:%M:%S')
     return date_time
 
 
